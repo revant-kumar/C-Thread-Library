@@ -34,7 +34,7 @@ double measureExecutionTime(int numThreads, std::function<void(int)> task) {
 }
 
 int main() {
-    const int numExecutions = 100; // Number of times to execute
+    const int numExecutions = 99999; // Number of times to execute
     const int numThreads = 5; // Number of threads to create each execution
     std::vector<double> executionTimes;
 

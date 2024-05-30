@@ -5,6 +5,8 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <mutex>
+#include <condition_variable>
 
 class ThreadLibrary {
 public:
@@ -18,11 +20,20 @@ private:
     struct ThreadData {
         int threadId;
         std::function<void(int)> task;
+        ThreadLibrary* library;
     };
 
     static void* threadFunction(void* arg);
+    void signalThreadCompletion();
+
     std::vector<pthread_t> threads;
     std::vector<std::unique_ptr<ThreadData>> threadData;
+
+    std::mutex mtx;
+    std::condition_variable cv;
+    int completedThreads = 0;
+    int totalThreads = 0;
+    bool allThreadsCompleted = false; // Flag to avoid spurious wake-ups
 };
 
 #endif // THREADLIBRARY_H
