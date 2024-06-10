@@ -16,6 +16,73 @@ public:
     // Method to join all threads
     void joinAllThreads();
 
+    // Mutex class
+    class Mutex {
+    public:
+        Mutex();
+        ~Mutex();
+        void lock();
+        void unlock();
+        pthread_mutex_t* getPthreadMutex();
+    private:
+        pthread_mutex_t mutex;
+    };
+
+
+    //Thread Attributes
+    class ThreadAttributes {
+    public:
+        ThreadAttributes();
+        ~ThreadAttributes();
+        void setStackSize(size_t size);
+        void setDetachState(bool detached);
+
+        pthread_attr_t* getPthreadAttr();
+
+    private:
+        pthread_attr_t attr;
+    };
+
+
+    // Lock guard class
+    class LockGuard {
+    public:
+        LockGuard(Mutex& m);
+        ~LockGuard();
+
+    private:
+        Mutex& mutex;
+    };
+
+    //Condition Variable
+    class ConditionVariable {
+    public:
+        ConditionVariable();
+        ~ConditionVariable();
+        void wait(Mutex& m);
+        void notify_one();
+        void notify_all();
+
+    private:
+        pthread_cond_t cond;
+    };
+
+    
+    //Thread Local Storage (TLS)
+    template <typename T>
+    class ThreadLocal {
+    public:
+        ThreadLocal();
+        ~ThreadLocal();
+        T& get();
+        void set(const T& value);
+
+    private:
+        pthread_key_t key;
+        static void destructor(void* value);
+    };
+
+
 private:
     struct ThreadData {
         int threadId;
@@ -35,5 +102,7 @@ private:
     int totalThreads = 0;
     bool allThreadsCompleted = false; // Flag to avoid spurious wake-ups
 };
+
+
 
 #endif // THREADLIBRARY_H
